@@ -33,7 +33,8 @@ Our solution is to create a platform/software that allows landowners and farmers
 ## Existing Efforts
 Various initiatives and programs have been undertaken to address the issue of uncultivated arable land in Bangladesh. The government has introduced subsidies for farmers and loans for agricultural investments. However, the problem persists, and there is a need for dedicated platforms that connect farmers, landowners, and investors.
 
-## Comparison to Existing Solutions
+| Comparison to Existing Solutions |
+------------------------------------
 While there are platforms in other countries that connect farmers and investors, there are few dedicated platforms for agricultural investment in developing countries like Bangladesh. Digital-Agro aims to fill this gap and provide a specific solution tailored to the needs of Bangladesh's agricultural sector.
 
 -------------------
