@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-# digital agro
-..
+
 =======
 # Digital-Agro-v1.0
 
