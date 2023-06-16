@@ -36,6 +36,27 @@ Various initiatives and programs have been undertaken to address the issue of un
 ## Comparison to Existing Solutions
 While there are platforms in other countries that connect farmers and investors, there are few dedicated platforms for agricultural investment in developing countries like Bangladesh. Digital-Agro aims to fill this gap and provide a specific solution tailored to the needs of Bangladesh's agricultural sector.
 
+-------------------
+| Required System |
+-------------------
+
+ >> Any version of windows operating system which is compatible to run Visual Studio Code.
+ 
+ >> Visual Studio Code
+ 
+ >> PostgreSQL management tool pgAdmin 4
+
+--------------------------
+| Minimum Specifications |
+--------------------------
+
+    1. Operating System : Windows® 7/8/10/11
+    2. Processor	: Intel® Core™ i3
+    3. Memory		: 2 GB RAM
+    4. Graphics		: Not Required
+    5. Network		: Broadband Internet Connection
+    6. Storage		: 3 GB
+
 ## Conclusion
 Digital-Agro offers a unique platform to connect landowners, farmers, and investors, addressing the issue of uncultivated arable land in Bangladesh. By leveraging available resources and capital, we aim to increase agricultural production, improve food security, and provide employment opportunities. Our project aligns with the country's priority program under agriculture production and offers a self-sustainable business model.
 
