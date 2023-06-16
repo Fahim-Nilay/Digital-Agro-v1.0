@@ -44,7 +44,7 @@ While there are platforms in other countries that connect farmers and investors,
  
  >> Visual Studio Code
  
- >> PostgreSQL management tool pgAdmin 4
+ >> Microsoft SQL Server
 
 --------------------------
 | Minimum Specifications |
