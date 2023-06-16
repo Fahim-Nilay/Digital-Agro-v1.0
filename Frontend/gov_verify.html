@@ -1,0 +1,364 @@
+<html>
+    <head>
+        <style>
+            
+            a.Panel {
+                background-color: dodgerblue;
+                color: white;
+                text-size-adjust: 21px;
+            }
+        </style>
+        <title>Gov Panel</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+        <script src="myscripts.js"></script> 
+        <script>
+            var app = angular.module("my-app",[]);
+
+            // For popup
+            app.directive('modal', function () {
+                return {
+                template: '<div class="modal fade">' + 
+                    '<div class="modal-dialog">' + 
+                        '<div class="modal-content">' + 
+                        '<div class="modal-header">' + 
+                            '<button type="button" class="button-11" data-dismiss="modal" aria-hidden="true">&times;</button>' + 
+                            '<p class="modal-title">Details:{{giveConfirmMess}}</p>' + 
+                        '</div>' + 
+                        '<div class="modal-body" ng-transclude></div>' + 
+                        '</div>' + 
+                    '</div>' + 
+                    '</div>',
+                restrict: 'E',
+                transclude: true,
+                replace:true,
+                scope:true,
+                link: function postLink(scope, element, attrs) {
+                    scope.$watch(attrs.visible, function(value){
+                    if(value == true)
+                        $(element).modal('show');
+                    else
+                        $(element).modal('hide');
+                    });
+
+                    $(element).on('shown.bs.modal', function(){
+                    scope.$apply(function(){
+                        scope.$parent[attrs.visible] = true;
+                    });
+                    });
+
+                    $(element).on('hidden.bs.modal', function(){
+                    scope.$apply(function(){
+                        scope.$parent[attrs.visible] = false;
+                    });
+                    });
+                }
+                };
+            });
+            // 
+
+            if(localStorage.getItem("_govName") == null){
+                    document.location.href = 'http://127.0.0.1:5500/login-user.html';
+            }
+
+            app.factory('interceptor',[function(){
+                var interceptor = {
+                    request:function(config){
+                        config.headers.Authorization=localStorage.getItem("_govToken");
+                        return config;
+                    },
+                    response:function(config){
+                        return config;
+                    }
+                };
+                return interceptor;
+            }]);
+
+            app.config(function($httpProvider){
+                $httpProvider.interceptors.push('interceptor');
+            });
+
+
+            app.controller('userInfoCtrl', function($scope,$http){
+                $scope.lId = localStorage.getItem("_govId");
+                $scope.userName = localStorage.getItem("_govName");
+                var userId = localStorage.getItem("_govId");
+                $http.get("https://localhost:44312/api/gov/"+userId).then(function(resp){
+                    // $scope.wallet = resp.data.Wallet;
+                    $scope.GetOwner = function(details){
+                        $http.get("https://localhost:44312/api/user/"+details).then(function(resp){
+                            $scope.showModal = false;
+                            // $scope.buttonClicked = "";
+                            $scope.giveConfirmMess = null;
+                            $scope.buttonClicked = "Username: " +  resp.data.Username;
+                            $scope.info1 = "Id: " + resp.data.Id;
+                            $scope.info2 = "Name: "+resp.data.Name;
+                            $scope.info3 =  "Phone: "+resp.data.Phone;
+                            $scope.info4 = "Email: "+resp.data.Email;
+                            $scope.info5 = "Address: "+resp.data.Address;
+                            $scope.info6 = "District: "+resp.data.District;
+                            $scope.showModal = !$scope.showModal;
+                        }, function (err){
+                        });
+                    }
+                    $scope.GetDetails = function (index, msg) {
+                        if(msg != null){
+                        // alert("yes "+" invest");
+                        // debugger;
+                        $http.post("https://localhost:44312/api/InvestLand/VerifyLLbyGov/"+index+"/"+userId).then(function(resp1){
+                                $scope.buttonClicked = null;
+                                $scope.info1 = "Id: "+resp1.data.data.Id;
+                                $scope.info2 = "Address: "+resp1.data.data.Address;
+                                $scope.info3 = "Dsicription: "+resp1.data.data.Discription;
+                                $scope.info4 = "OwnerId: "+resp1.data.data.OwnerId;
+                                $scope.info5 = "Price: "+resp1.data.data.Price;
+                                $scope.info5 = "Status: "+resp1.data.data.Status;
+                                $scope.info5 = "District: "+resp1.data.data.District;
+                                $scope.showModal = false;
+                                // $scope.buttonClicked = "";
+                                $scope.giveConfirmMess = resp1.data.Msg;
+                                $scope.showModal = !$scope.showModal;
+                            },function(err){
+                            })
+                            
+                        }
+                        else{
+                            // alert("yes "+" Lease");
+                            // debugger;
+                            $http.post("https://localhost:44312/api/Leaseland/VerifyLLbyGov/"+index+"/"+userId).then(function(resp1){
+                                debugger;
+                                $scope.buttonClicked = null;
+                                $scope.info1 = "Id: "+resp1.data.data.Id;
+                                $scope.info2 = "Address: "+resp1.data.data.Address;
+                                $scope.info3 = "Dsicription: "+resp1.data.data.Discription;
+                                $scope.info4 = "OwnerId: "+resp1.data.data.OwnerId;
+                                $scope.info5 = "Price: "+resp1.data.data.Price;
+                                $scope.info5 = "Status: "+resp1.data.data.Status;
+                                $scope.info5 = "District: "+resp1.data.data.District;
+                                $scope.showModal = false;
+                                // $scope.buttonClicked = "";
+                                $scope.giveConfirmMess = resp1.data.Msg;
+                                $scope.showModal = !$scope.showModal;
+                            },function(err){
+                            })
+                        }
+
+                    };
+
+                    $scope.GetDetails1 = function (index, msg) {
+                        if(msg != null){
+                            // alert("not"+" invest");
+                            $http.post("https://localhost:44312/api/Investland/DeleteByGov/"+index).then(function(resp1){
+                                $scope.buttonClicked = null;
+                                debugger;
+                                $scope.info1 = '';
+                                $scope.info2 = '';
+                                $scope.info3 = '';
+                                $scope.info4 = '';
+                                $scope.info5 = '';
+                                $scope.info5 = '';
+                                $scope.info5 = '';
+                                $scope.showModal = false;
+                                // $scope.buttonClicked = "";
+                                $scope.giveConfirmMess = resp1.data.Msg;
+                                $scope.showModal = !$scope.showModal;
+                            },function(err){
+                            })
+                            
+                        }
+                        else{
+                            // alert("not"+" Lease");
+                            //debugger;
+                            $http.post("https://localhost:44312/api/Leaseland/DeleteByGov/"+index).then(function(resp1){
+                                $scope.buttonClicked = null;
+                                debugger;
+                                $scope.info1 = '';
+                                $scope.info2 = '';
+                                $scope.info3 = '';
+                                $scope.info4 = '';
+                                $scope.info5 = '';
+                                $scope.info5 = '';
+                                $scope.info5 = '';
+                                $scope.showModal = false;
+                                // $scope.buttonClicked = "";
+                                $scope.giveConfirmMess = resp1.data.Msg;
+                                $scope.showModal = !$scope.showModal;
+                            },function(err){
+                            })
+                        }
+
+                    };
+                }, function(err){
+                });
+            });
+
+                app.controller('adminListCtrl', function($scope,$http){
+                var gId = localStorage.getItem("_govId");
+                $http.get("https://localhost:44312/api/Leaseland/verifyByGovID/" + gId).then(function(resp){
+                    $scope.admin = resp.data;
+                    $scope.Price = "Price";
+                    $scope.Period = "Period";
+
+                    $scope.myClick = function (value) {
+
+                        if(value == "All"){
+                            //LeaseLand
+                            $scope.Price = "Price";
+                            $scope.Period = "Period";
+                            $http.get("https://localhost:44312/api/Leaseland/verifyByGovID/" + gId).then(function(resp){
+                                $scope.admin = resp.data;
+                            },function(err){
+                            });
+                            $scope.admin = null;
+                        }
+                        if(value == "Available"){
+                            //InvestLand
+                            $scope.Price = "Asking ammount";
+                            $scope.Period = "Crops";
+                            debugger;
+                            $http.get("https://localhost:44312/api/InvestLand/verifyByGovID/" + gId).then(function(resp){
+                                $scope.admin = resp.data;
+                                debugger;
+                            },function(err){
+                            });
+                            $scope.admin = null;
+
+                        }
+
+                    };
+
+
+
+                }, function(err){
+                });
+
+                });
+        </script>
+    </head>
+
+    <script type="text/javascript" src="js/lib/jquery-1.11.1.min.js" ></script>
+    <!-- Don't delete 1st link -->
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">  -->
+    <link rel="stylesheet" type="text/css" href="/CSS/down1.min.css">
+    <link rel="stylesheet" type="text/css" href="/CSS/design.css">
+    <link rel="stylesheet" type="text/css" href="/CSS/button.css">
+    <link rel="stylesheet" type="text/css" href="/CSS/nev.css">
+    <link rel="stylesheet" type="text/css" href="/CSS/table.css">
+    <body ng-app="my-app">
+        <div ng-controller="userInfoCtrl">
+            <div class="header">
+                <a href="../index.html" class="logo"><b>Digital agro</b></a>
+                <div class="header-right">
+                    <a class="Home" href="index.html">Home</a>
+                    <a class="Panel" href="gov_verify.html">Deshboard</a>
+                    <a class="Profile" href="profile-gov.html">Profile</a>
+                    <a class="Password" href="pass-gov.html">Change password</a>
+                    <a class="Logout" href="logout.html">Logout</a>
+                </div>
+            </div>
+
+            <!-- 2nd nevbar -->
+
+            <ul>
+                <li><a>{{userName}}-{{lId}}</a></li>
+                <li><a class="active" href="gov_verify.html">Verify</a></li>
+                <li><a href="gov_myVerify.html">Completed Task</a></li>
+
+            </ul>
+            <div>
+                <modal visible="showModal">
+                    <p>{{buttonClicked}}</p>
+                    <p>{{info1}}</p>
+                    <p>{{info2}}</p>
+                    <p>{{info3}}</p>
+                    <p>{{info4}}</p>
+                    <p>{{info5}}</p>
+                    <p>{{info6}}</p>
+                </modal>
+            </div>
+
+            <br><br><br>
+            <!-- Body -->
+            <div ng-controller="adminListCtrl">
+
+            <div class="main" style="text-align: center; width: auto; outline: solid 1px black;display: flex;">
+                <div>
+                    <div ng-controller="userInfoCtrl">
+                        <div class="signup-form" >
+                            <h2 class="form-title">Click option to show specific table!</h2>
+                            <form class="form-radio" [(ngModel)]>
+                                <input ng-checked='true' ng-model="value" type="radio" name="member_level" value="All" id="newbie" checked />
+                                <label for="newbie">Verify lease Land</label>
+        
+                                <input ng-model="value" type="radio" name="member_level" value="Available" id="average" />
+                                <label for="average">Verify investment Land</label>
+
+                                <span>&nbsp&nbsp&nbsp&nbsp</span>
+                                <span></span>
+                                <a class="button-2" type="button" ng-click="myClick(value)">Filter</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <!-- CHECKBOX -->
+                <table style="width: 100%;" id="customers" >
+                    <tr>
+                        <th style="text-align: center;">Id</th>
+                        <th style="text-align: center;">Address</th>
+                        <th style="text-align: center;">District</th>
+                        <th style="text-align: center;">Discription</th>
+                        <th style="text-align: center;">{{Price}}</th>
+                        <th style="text-align: center;">Landsize</th>
+                        <th style="text-align: center;">Status</th>
+                        <th style="text-align: center;">Owner userId</th>
+                        <th style="text-align: center;">Publish Time</th>
+                        <th style="text-align: center;">{{Period}}</th>
+                        <th style="text-align: center;">Action</th>
+                    </tr>
+                    <form ng-submit="createAdmin()">
+                    <tr ng-repeat="h in admin">
+                        <td ng-model="Name">{{h.Id}}</td>
+                        <td>{{h.Address}}</td>
+                        <td>{{h.District}}</td>
+                        <td>{{h.Discription}}</td>
+                        <td>{{h.Moneyneed}}{{h.Price}}$</td>
+                        <td>{{h.Landsize}}</td>
+                        <td>{{h.Status}}</td>
+                        <td><input type="submit" ng-click="GetOwner(h.OwnerId)" name="submit" class="button-4" value="{{h.OwnerId}}" class="submit"></td>
+                        <td>{{h.Publishtime | date:'yyyy-MM-dd'}}</td>
+                        <td>{{h.Period}}{{h.WhichCrops}}</td>
+                        <td><input type="submit" ng-click="GetDetails(h.Id, h.Moneyneed)" name="submit" class="button-1" class="submit" value="Verify"/>
+                            <input type="submit" style="background-color: red;" ng-click="GetDetails1(h.Id, h.Moneyneed)" name="submit" class="button-1" class="submit" value="Cancel"/>
+                        </td>
+                    </tr>
+                </form>
+                </table>
+            </div>
+        </div>
+
+
+
+        <!-- Body -->
+        <br>
+
+
+        <footer class="site-footer">
+            <div class="container1">
+                <p>Digital-agro is a non-profit digital platform for farmers and entrepreneurs to 
+                    work together and help our economy and agricultural stability. </p>
+                <h4> &copy; 2022. Digital-agro Ltd</h4>
+                <address>
+                    Mail at <a href="info@da.com">info@Digital-agro.com</a><br>
+                    Visit us at: House #16, Road # 2<br>
+                    Dhanmondi R/A<br>Dhaka-1205<br>
+                    Bangladesh
+                </address>
+            </div>
+        </footer>
+        
+    </body>
+</html>
